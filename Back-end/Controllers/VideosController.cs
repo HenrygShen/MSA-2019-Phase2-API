@@ -10,6 +10,7 @@ using Back_end.Helper;
 using Back_end.DAL;
 using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Cors;
 
 namespace Back_end.Controllers
 {
@@ -21,6 +22,7 @@ namespace Back_end.Controllers
 
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors("AllowOrigin")]
     public class VideosController : ControllerBase
     {
         private readonly scriberContext _context;

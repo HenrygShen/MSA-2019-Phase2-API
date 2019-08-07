@@ -6,11 +6,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Back_end.Model;
+using Microsoft.AspNetCore.Cors;
 
 namespace Back_end.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors("AllowOrigin")]
     public class TranscriptionsController : ControllerBase
     {
         private readonly scriberContext _context;
