@@ -17,5 +17,10 @@ namespace Back_end.CentralHub
         {
             await Clients.All.SendAsync("UpdateVideoList");
         }
+
+        public async Task DeleteVideo()
+        {
+            await Clients.All.SendAsync("VideoDeleted");
+        }
     }
 }
