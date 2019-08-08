@@ -13,14 +13,9 @@ namespace Back_end.CentralHub
             await Clients.All.SendAsync("Connected");
         }
 
-        public async Task AddVideo()
+        public async Task UpdateVideos()
         {
             await Clients.All.SendAsync("UpdateVideoList");
-        }
-
-        public async Task DeleteVideo()
-        {
-            await Clients.All.SendAsync("VideoDeleted");
         }
     }
 }
