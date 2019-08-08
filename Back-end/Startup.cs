@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Swagger;
 using AutoMapper;
+using Back_end.CentralHub;
 
 namespace Back_end
 {
@@ -31,10 +32,15 @@ namespace Back_end
         {
             services.AddCors(c =>
             {
-                c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin()
+                c.AddPolicy("AllowOrigin", options => options.WithOrigins("http://localhost:3000",
+                                                                        "https://www.youtube.com")
                                                             .AllowAnyMethod()
-                                                            .AllowAnyHeader());
+                                                            .AllowAnyHeader()
+                                                            .AllowCredentials());
             });
+
+            services.AddSignalR();
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2).AddJsonOptions(
                         options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddDbContext<scriberContext>();
@@ -81,11 +87,26 @@ namespace Back_end
                 app.UseHsts();
             }
 
-            app.UseCors(options => options.AllowAnyOrigin()
-                                          .AllowAnyMethod()
-                                          .AllowAnyHeader());
+            // Make sure the CORS middleware is ahead of SignalR.
+            app.UseCors(builder =>
+            {
+                builder.WithOrigins("http://localhost:3000",
+                    "https://www.youtube.com")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
+            });
 
-            app.UseHttpsRedirection();
+
+            // SignalR
+            app.UseFileServer();
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<SignalrHub>("/hub");
+            });
+
+
+            //app.UseHttpsRedirection();
             app.UseMvc();
         }
     }
