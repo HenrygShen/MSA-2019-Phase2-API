@@ -17,12 +17,12 @@ namespace Back_end.Model
 
         public virtual DbSet<Transcription> Transcription { get; set; }
         public virtual DbSet<Video> Video { get; set; }
+        //public virtual DbSet<Users> Users { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-                #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
                 optionsBuilder.UseSqlServer("Server=tcp:msaphase2-hgs.database.windows.net,1433;Initial Catalog=scriber;Persist Security Info=False;User ID=admin-hgs;Password=scriber-7890;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
             }
         }
@@ -50,6 +50,13 @@ namespace Back_end.Model
 
                 entity.Property(e => e.WebUrl).IsUnicode(false);
             });
+
+            //modelBuilder.Entity<Users>(entity =>
+            //{
+            //    entity.Property(e => e.Username).IsUnicode(false);
+
+            //    entity.Property(e => e.Password).IsUnicode(false);
+            //});
         }
     }
 }
