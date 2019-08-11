@@ -7,15 +7,16 @@ using System.Threading.Tasks;
 
 namespace Back_end.Model
 {
-    public partial class Users
+    public class UserDTO
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
+    }
+    public class User
     {
         [Key]
         public int UserId { get; set; }
-        [Required]
-        [StringLength(255)]
         public string Username { get; set; }
-        [Required]
-        [StringLength(255)]
         public string Password { get; set; }
     }
 }

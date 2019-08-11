@@ -14,6 +14,9 @@ using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Swagger;
 using AutoMapper;
 using Back_end.CentralHub;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication;
+using Back_end.DAL;
 
 namespace Back_end
 {
@@ -43,7 +46,14 @@ namespace Back_end
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2).AddJsonOptions(
                         options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
+            //services.AddAuthentication("BasicAuthentication")
+            //    .AddScheme<AuthenticationSchemeOptions, AuthenticationHandler>("BasicAuthentication", null);
+
+            services.AddScoped<IUserRepository, UserRepository>();
+
             services.AddDbContext<scriberContext>();
+
             services.AddAutoMapper(typeof(Startup));
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
@@ -91,12 +101,14 @@ namespace Back_end
             app.UseCors(builder =>
             {
                 builder.WithOrigins("http://localhost:3000",
+                    "http://localhost:8080",
                     "https://www.youtube.com")
                     .AllowAnyHeader()
                     .AllowAnyMethod()
                     .AllowCredentials();
             });
 
+            //app.UseAuthentication();
 
             // SignalR
             app.UseFileServer();
@@ -104,7 +116,6 @@ namespace Back_end
             {
                 routes.MapHub<SignalrHub>("/hub");
             });
-
 
             //app.UseHttpsRedirection();
             app.UseMvc();
