@@ -114,7 +114,6 @@ namespace Back_end.DAL
                         // Add userId to likesList
                         string newUser = userId.ToString() + "-";
                         likesList += newUser;
-                        await connection.ExecuteAsync("UPDATE Comments SET Likes = @likes, LikesList = @likesList WHERE CommentId=@commentId", new { numLikes, likesList, commentId });
                     }
                     else
                     {
@@ -124,9 +123,9 @@ namespace Back_end.DAL
                         // Remove userId from likesList
                         string oldUser = userId.ToString() + "-";
                         likesList = likesList.Replace(oldUser,"");
-                        await connection.ExecuteAsync("UPDATE Comments SET Likes = @likes, LikesList = @likesList WHERE CommentId=@commentId", new { numLikes, likesList, commentId });
                     }
-                    
+                    await connection.ExecuteAsync("UPDATE Comments SET Likes = @likes, LikesList = @likesList WHERE CommentId=@commentId", new { likes = numLikes, likesList, commentId });
+
                     return true;
                 }
             }
