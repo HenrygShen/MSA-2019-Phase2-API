@@ -2,45 +2,76 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Back_end.DAL;
+using Back_end.Model;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Back_end.Controllers
 {
+    [ApiController]
     [Route("api/[controller]")]
-    public class CommentsController : Controller
+    [EnableCors("AllowOrigin")]
+    public class CommentsController : ControllerBase
     {
-        // GET: api/<controller>
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
+        private ICommentsRepository _commentsRepository;
 
-        // GET api/<controller>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        public CommentsController(ICommentsRepository commentsRepository)
         {
-            return "value";
+            _commentsRepository = commentsRepository;
+        }
+        // GET api/<controller>/5
+        [HttpGet("{videoId}")]
+        public async Task<IActionResult> GetComments(int videoId)
+        {
+            var comments = await _commentsRepository.GetComments(videoId);
+            return Ok(comments);
         }
 
         // POST api/<controller>
         [HttpPost]
-        public void Post([FromBody]string value)
+        public async Task<IActionResult> AddComment([FromBody]CommentsDTO commentInfo)
         {
+            bool added = await _commentsRepository.AddComment(commentInfo);
+            if (!added)
+                return BadRequest(new { message = "Failed to save comment" });
+
+            return Ok(new { message = "Comment saved" });
         }
 
-        // PUT api/<controller>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
+        // PUT api/<controller>/
+        [HttpPut("UpdateComment")]
+        public async Task<IActionResult> UpdateComment([FromBody]Comments commentInfo)
         {
+            bool updated = await _commentsRepository.UpdateComment(commentInfo.CommentId, commentInfo.Comment);
+            if (!updated)
+                return BadRequest(new { message = "Failed to update comment" });
+
+            return Ok(new { message = "Comment updated" });
+        }
+
+        // PUT api/<controller>/
+        [HttpPut("UpdateLikes")]
+        public async Task<IActionResult> UpdateLikes([FromBody]LikesDTO commentInfo)
+        {
+            bool updated = await _commentsRepository.UpdateLikes(commentInfo.CommentId, commentInfo.UserId, commentInfo.NumLikes, commentInfo.Like, commentInfo.LikesList);
+            if (!updated)
+                return BadRequest(new { message = "Failed to update likes" });
+
+            return Ok(new { message = "Likes updated" });
         }
 
         // DELETE api/<controller>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete("{commentId}")]
+        public async Task<IActionResult> DeleteComment(int commentId)
         {
+            bool deleted = await _commentsRepository.DeleteComment(commentId);
+            if (!deleted)
+                return BadRequest(new { message = "Failed to delete comment" });
+
+            return Ok(new { message = "Comment deleted" });
         }
     }
 }

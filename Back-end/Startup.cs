@@ -14,8 +14,6 @@ using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Swagger;
 using AutoMapper;
 using Back_end.CentralHub;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authentication;
 using Back_end.DAL;
 
 namespace Back_end
@@ -36,6 +34,7 @@ namespace Back_end
             services.AddCors(c =>
             {
                 c.AddPolicy("AllowOrigin", options => options.WithOrigins("http://localhost:3000",
+                                                                        "https://localhost:44307",
                                                                         "https://msascriberapido.azurewebsites.net/",
                                                                         "https://www.youtube.com")
                                                             .AllowAnyMethod()
@@ -52,6 +51,7 @@ namespace Back_end
             //    .AddScheme<AuthenticationSchemeOptions, AuthenticationHandler>("BasicAuthentication", null);
 
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<ICommentsRepository, CommentsRepository>();
 
             services.AddDbContext<scriberContext>();
 
@@ -102,6 +102,7 @@ namespace Back_end
             app.UseCors(builder =>
             {
                 builder.WithOrigins("http://localhost:3000",
+                    "https://localhost:44307",
                     "https://msascriberapido.azurewebsites.net/",
                     "https://www.youtube.com")
                     .AllowAnyHeader()

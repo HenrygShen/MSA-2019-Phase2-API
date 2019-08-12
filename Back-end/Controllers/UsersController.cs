@@ -3,11 +3,13 @@ using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
 using Back_end.DAL;
 using Back_end.Model;
+using Microsoft.AspNetCore.Cors;
 
 namespace WebApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [EnableCors("AllowOrigin")]
     public class UsersController : ControllerBase
     {
         private IUserRepository _userRepository;

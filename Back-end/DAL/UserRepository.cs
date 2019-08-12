@@ -60,7 +60,6 @@ namespace Back_end.DAL
                     }
                     var affectedRows = connection.ExecuteAsync(@"insert into Users (username, password) 
                                                         values(@username, @password)", new { username, password }).Result;
-                    Console.WriteLine(affectedRows);
                     return true;
                 }
             }
