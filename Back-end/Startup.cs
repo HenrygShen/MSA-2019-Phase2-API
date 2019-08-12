@@ -36,6 +36,7 @@ namespace Back_end
             services.AddCors(c =>
             {
                 c.AddPolicy("AllowOrigin", options => options.WithOrigins("http://localhost:3000",
+                                                                        "https://msascriberapido.azurewebsites.net/",
                                                                         "https://www.youtube.com")
                                                             .AllowAnyMethod()
                                                             .AllowAnyHeader()
@@ -101,7 +102,7 @@ namespace Back_end
             app.UseCors(builder =>
             {
                 builder.WithOrigins("http://localhost:3000",
-                    "http://localhost:8080",
+                    "https://msascriberapido.azurewebsites.net/",
                     "https://www.youtube.com")
                     .AllowAnyHeader()
                     .AllowAnyMethod()

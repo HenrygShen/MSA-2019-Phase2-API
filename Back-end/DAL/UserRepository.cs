@@ -20,7 +20,7 @@ namespace Back_end.DAL
 
         public UserRepository()
         {
-            this.connectionString = "Server=tcp:msaphase2-hgs.database.windows.net,1433;Initial Catalog=scriber;Persist Security Info=False;User ID=admin-hgs;Password=scriber-7890;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+            this.connectionString = "Server=tcp:scriber-hgs.database.windows.net,1433;Initial Catalog=scriber;Persist Security Info=False;User ID=admin-hgs;Password=scriber-7890;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
         }
 
         public async Task<User> Authenticate(string username, string password)
@@ -52,6 +52,12 @@ namespace Back_end.DAL
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
+                        
+                    string response = connection.QuerySingleOrDefaultAsync<string>("Select 1 from Users where Username=@username", new { username }).Result;
+                    if (response == "1")
+                    {
+                        return false;
+                    }
                     var affectedRows = connection.ExecuteAsync(@"insert into Users (username, password) 
                                                         values(@username, @password)", new { username, password }).Result;
                     Console.WriteLine(affectedRows);

@@ -34,8 +34,9 @@ namespace WebApi.Controllers
             var registered = _userRepository.Register(userParam.Username, userParam.Password);
 
             if (registered == false)
-                return BadRequest(new { message = "Username or password is incorrect" });
-            return Ok();
+                return BadRequest(new { message = "Registration failed, Username taken" });
+
+            return Ok(new { message = "Registration Successful" });
         }
     }
 }
