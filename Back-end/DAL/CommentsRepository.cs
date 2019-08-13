@@ -88,7 +88,7 @@ namespace Back_end.DAL
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     await connection.OpenAsync();
-                    var affectedRows = connection.ExecuteAsync("UPDATE Comments SET Comment = @comment, Edited = 1 WHERE CommentId=@commentId", new { comment, commentId }).Result;
+                    await connection.ExecuteAsync("UPDATE Comments SET Comment = @comment, Edited = 1 WHERE CommentId=@commentId", new { comment, commentId });
                     return true;
                 }
             }

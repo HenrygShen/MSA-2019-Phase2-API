@@ -26,21 +26,22 @@ namespace Back_end.Controllers
     public class VideosController : ControllerBase
     {
         private readonly scriberContext _context;
-        private IVideoRepository videoRepository;
+        private IVideoRepository _videoRepository;
         private readonly IMapper _mapper;
 
-        public VideosController(scriberContext context, IMapper mapper)
+        public VideosController(scriberContext context, IMapper mapper, IVideoRepository videoRepository)
         {
             _context = context;
             _mapper = mapper;
-            this.videoRepository = new VideoRepository(new scriberContext());
+            _videoRepository = videoRepository;
         }
 
         // GET: api/Videos
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Video>>> GetVideo()
         {
-            return await _context.Video.ToListAsync();
+            var videos = await _videoRepository.GetVideos();
+            return Ok(videos);
         }
 
         // GET: api/Videos/5
@@ -115,10 +116,10 @@ namespace Back_end.Controllers
 
         //PUT with PATCH to handle isFavourite
         [HttpPatch("update/{id}")]
-        public VideoDTO Patch(int id, [FromBody]JsonPatchDocument<VideoDTO> videoPatch)
+        public async Task<ActionResult<VideoDTO>> Patch(int id, [FromBody]JsonPatchDocument<VideoDTO> videoPatch)
         {
             //get original video object from the database
-            Video originVideo = videoRepository.GetVideoByID(id);
+            Video originVideo = await _videoRepository.GetVideoByID(id);
             //use automapper to map that to DTO object
             VideoDTO videoDTO = _mapper.Map<VideoDTO>(originVideo);
             //apply the patch to that DTO
@@ -126,8 +127,7 @@ namespace Back_end.Controllers
             //use automapper to map the DTO back ontop of the database object
             _mapper.Map(videoDTO, originVideo);
             //update video in the database
-            _context.Update(originVideo);
-            _context.SaveChanges();
+            _videoRepository.UpdateVideo(originVideo);
             return videoDTO;
         }
 
@@ -188,14 +188,13 @@ namespace Back_end.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Video>> DeleteVideo(int id)
         {
-            var video = await _context.Video.FindAsync(id);
+            var video = await _videoRepository.GetVideoByID(id);
             if (video == null)
             {
                 return NotFound();
             }
 
-            _context.Video.Remove(video);
-            await _context.SaveChangesAsync();
+            _videoRepository.DeleteVideo(id);
 
             return video;
         }

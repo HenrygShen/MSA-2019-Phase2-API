@@ -52,6 +52,7 @@ namespace Back_end
 
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ICommentsRepository, CommentsRepository>();
+            services.AddScoped<IVideoRepository, VideoRepository>();
 
             services.AddDbContext<scriberContext>();
 
