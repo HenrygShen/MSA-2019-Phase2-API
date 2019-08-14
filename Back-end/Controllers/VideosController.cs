@@ -160,10 +160,5 @@ namespace Back_end.Controllers
                 return BadRequest(new { message = "Failed to delete video" });
             return Ok(new { message = "Video deleted" });
         }
-
-        //private bool VideoExists(int id)
-        //{
-        //    return _context.Video.Any(e => e.VideoId == id);
-        //}
     }
 }

@@ -140,7 +140,8 @@ namespace Back_end.DAL
                                                 VideoLength = @VideoLength,
                                                 WebUrl = @WebURL,
                                                 ThumbnailURL = @ThumbnailURL,
-                                                isFavourite = @IsFavourite", video);
+                                                isFavourite = @IsFavourite
+                                                where VideoId=@VideoId", video);
                     return true;
                 }
             }
