@@ -25,13 +25,11 @@ namespace Back_end.Controllers
     [EnableCors("AllowOrigin")]
     public class VideosController : ControllerBase
     {
-        private readonly scriberContext _context;
         private IVideoRepository _videoRepository;
         private readonly IMapper _mapper;
 
-        public VideosController(scriberContext context, IMapper mapper, IVideoRepository videoRepository)
+        public VideosController(IMapper mapper, IVideoRepository videoRepository)
         {
-            _context = context;
             _mapper = mapper;
             _videoRepository = videoRepository;
         }
@@ -48,14 +46,14 @@ namespace Back_end.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Video>> GetVideo(int id)
         {
-            var video = await _context.Video.FindAsync(id);
+            var video = await _videoRepository.GetVideoByID(id);
 
             if (video == null)
             {
                 return NotFound();
             }
 
-            return video;
+            return Ok(video);
         }
 
         // GET api/Videos/SearchByTranscriptions/HelloWorld
@@ -68,50 +66,14 @@ namespace Back_end.Controllers
             }
 
             // Choose transcriptions that has the phrase 
-            var videos = await _context.Video.Include(video => video.Transcription).Select(video => new Video
-            {
-                VideoId = video.VideoId,
-                VideoTitle = video.VideoTitle,
-                VideoLength = video.VideoLength,
-                WebUrl = video.WebUrl,
-                ThumbnailUrl = video.ThumbnailUrl,
-                IsFavourite = video.IsFavourite,
-                Transcription = video.Transcription.Where(tran => tran.Phrase.Contains(searchString)).ToList()
-            }).ToListAsync();
+            List<Video> videos = await _videoRepository.GetVideoWithTranscription(searchString);
+
+            if (videos == null)
+                return BadRequest("Something went wrong in the GetVideoWithTranscription method");
 
             // Removes all videos with empty transcription
             videos.RemoveAll(video => video.Transcription.Count == 0);
             return Ok(videos);
-        }
-
-        // PUT: api/Videos/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutVideo(int id, Video video)
-        {
-            if (id != video.VideoId)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(video).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!VideoExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
         }
 
         //PUT with PATCH to handle isFavourite
@@ -127,7 +89,7 @@ namespace Back_end.Controllers
             //use automapper to map the DTO back ontop of the database object
             _mapper.Map(videoDTO, originVideo);
             //update video in the database
-            _videoRepository.UpdateVideo(originVideo);
+            await _videoRepository.UpdateVideo(originVideo);
             return videoDTO;
         }
 
@@ -151,8 +113,7 @@ namespace Back_end.Controllers
             }
 
             // Add this video object to the database
-            _context.Video.Add(video);
-            await _context.SaveChangesAsync();
+            await _videoRepository.AddVideo(video);
 
             // Get the primary key of the newly created video record
             int id = video.VideoId;
@@ -194,14 +155,15 @@ namespace Back_end.Controllers
                 return NotFound();
             }
 
-            _videoRepository.DeleteVideo(id);
-
-            return video;
+            bool deleted = await _videoRepository.DeleteVideo(id);
+            if (!deleted)
+                return BadRequest(new { message = "Failed to delete video" });
+            return Ok(new { message = "Video deleted" });
         }
 
-        private bool VideoExists(int id)
-        {
-            return _context.Video.Any(e => e.VideoId == id);
-        }
+        //private bool VideoExists(int id)
+        //{
+        //    return _context.Video.Any(e => e.VideoId == id);
+        //}
     }
 }

@@ -16,8 +16,6 @@ namespace Back_end.Model
         }
 
         public virtual DbSet<Transcription> Transcription { get; set; }
-        public virtual DbSet<Video> Video { get; set; }
-        //public virtual DbSet<Users> Users { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -42,21 +40,6 @@ namespace Back_end.Model
                     .HasConstraintName("VideoId");
             });
 
-            modelBuilder.Entity<Video>(entity =>
-            {
-                entity.Property(e => e.ThumbnailUrl).IsUnicode(false);
-
-                entity.Property(e => e.VideoTitle).IsUnicode(false);
-
-                entity.Property(e => e.WebUrl).IsUnicode(false);
-            });
-
-            //modelBuilder.Entity<Users>(entity =>
-            //{
-            //    entity.Property(e => e.Username).IsUnicode(false);
-
-            //    entity.Property(e => e.Password).IsUnicode(false);
-            //});
         }
     }
 }

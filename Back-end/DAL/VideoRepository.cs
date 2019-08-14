@@ -9,17 +9,17 @@ using System.Threading.Tasks;
 
 namespace Back_end.DAL
 {
-    public interface IVideoRepository : IDisposable
+    public interface IVideoRepository
     {
 
         Task<IEnumerable<Video>> GetVideos();
         Task<Video> GetVideoByID(int VideoId);
-        void InsertVideo(Video video);
+        Task<bool> AddVideo(Video video);
         Task<bool> DeleteVideo(int VideoId);
         Task<bool> UpdateVideo(Video video);
-        void Save();
+        Task<List<Video>> GetVideoWithTranscription(string searchString);
     }
-    public class VideoRepository : IVideoRepository, IDisposable
+    public class VideoRepository : IVideoRepository
     {
         private scriberContext context;
         private readonly string connectionString;
@@ -62,22 +62,17 @@ namespace Back_end.DAL
             {
                 return null;
             }
-            //return context.Video.Find(id);
         }
 
-        public void InsertVideo(Video video)
-        {
-            context.Video.Add(video);
-        }
-
-        public async Task<bool> DeleteVideo(int videoId)
+        public async Task<bool> AddVideo(Video video)
         {
             try
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     await connection.OpenAsync();
-                    await connection.ExecuteAsync("Delete Video where VideoId=@videoId)", new { videoId });
+                    await connection.ExecuteAsync(@"insert into Video (VideoTitle, VideoLength, WebUrl, ThumbnailURL, isFavourite) 
+                                                        values(@VideoTitle, @VideoLength, @WebUrl, @ThumbnailURL, @isFavourite)", video);
                     return true;
                 }
             }
@@ -87,35 +82,72 @@ namespace Back_end.DAL
             }
         }
 
-        public async Task<bool> UpdateVideo(Video video)
+        public async Task<bool> DeleteVideo(int videoId)
         {
-
-            context.Entry(video).State = EntityState.Modified;
-        }
-
-        public void Save()
-        {
-            context.SaveChanges();
-        }
-
-        private bool disposed = false;
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!this.disposed)
+            try
             {
-                if (disposing)
+                using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    context.Dispose();
+                    await connection.OpenAsync();
+                    await connection.ExecuteAsync("Delete Video where VideoId=@videoId", new { videoId });
+                    return true;
                 }
             }
-            this.disposed = true;
+            catch
+            {
+                return false;
+            }
         }
 
-        public void Dispose()
+        public async Task<List<Video>> GetVideoWithTranscription(string searchString)
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+                    var transcriptions = await connection.QueryAsync<Transcription>("Select * from Transcription where Phrase like @phrase", new { phrase = '%' + searchString + '%' });
+                    var videos = await connection.QueryAsync<Video>("Select * from Video");
+                    IEnumerable<Video> finalVideos;
+
+                    finalVideos = videos.Select(video => new Video
+                    {
+                        VideoId = video.VideoId,
+                        VideoTitle = video.VideoTitle,
+                        VideoLength = video.VideoLength,
+                        WebUrl = video.WebUrl,
+                        ThumbnailUrl = video.ThumbnailUrl,
+                        IsFavourite = video.IsFavourite,
+                        Transcription = transcriptions.Where(tran => tran.VideoId == video.VideoId).ToList()
+                    });
+                    return finalVideos.ToList();
+                }
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public async Task<bool> UpdateVideo(Video video)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+                    await connection.ExecuteAsync(@"Update Video Set VideoTitle = @VideoTitle,
+                                                VideoLength = @VideoLength,
+                                                WebUrl = @WebURL,
+                                                ThumbnailURL = @ThumbnailURL,
+                                                isFavourite = @IsFavourite", video);
+                    return true;
+                }
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }
