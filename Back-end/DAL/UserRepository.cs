@@ -11,7 +11,7 @@ namespace Back_end.DAL
     public interface IUserRepository
     {
         Task<User> Authenticate(string username, string password);
-        bool Register(string username, string password);
+        Task<bool> Register(string username, string password);
     }
 
     public class UserRepository : IUserRepository
@@ -25,16 +25,19 @@ namespace Back_end.DAL
 
         public async Task<User> Authenticate(string username, string password)
         {
+            
             try
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    var user = connection.QuerySingleOrDefaultAsync<User>("Select * from Users where Username=@username", new { username }).Result;
+                    await connection.OpenAsync();
+                    var user = await connection.QuerySingleOrDefaultAsync<User>("Select * from Users where Username=@username", new { username });
                     // Check for valid login, returns null if user not found
                     if (user == null)
                         return null;
 
-                    if(user.Password == password)
+                    bool isValid = BCrypt.Net.BCrypt.Verify(password, user.Password);
+                    if (isValid)
                     {
                         user.Password = null;
                         return user;
@@ -49,27 +52,26 @@ namespace Back_end.DAL
             {
                 return null;
             }
-            //var user = await Task.Run(() => _users.SingleOrDefault(x => x.Username == username && x.Password == password));
         }
 
-        public bool Register(string username, string password)
+        public async Task<bool> Register(string username, string password)
         {
+            string hashedPW = BCrypt.Net.BCrypt.HashPassword(password, workFactor: 12);
             try
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                        
-                    string response = connection.QuerySingleOrDefaultAsync<string>("Select 1 from Users where Username=@username", new { username }).Result;
+                    await connection.OpenAsync();
+                    string response = await connection.QuerySingleOrDefaultAsync<string>("Select 1 from Users where Username=@username", new { username });
                     if (response == "1")
                     {
                         return false;
                     }
-                    var affectedRows = connection.ExecuteAsync(@"insert into Users (username, password) 
-                                                        values(@username, @password)", new { username, password }).Result;
+                    await connection.ExecuteAsync(@"insert into Users (username, password) values(@username, @hashedPW)", new { username, hashedPW });
                     return true;
                 }
             }
-            catch (SqlException ex)
+            catch
             {
                 return false;
             }

@@ -33,7 +33,7 @@ namespace WebApi.Controllers
         [HttpPost("Signup")]
         public async Task<IActionResult> SignUp([FromBody]UserDTO userParam)
         {
-            var registered = _userRepository.Register(userParam.Username, userParam.Password);
+            var registered = await _userRepository.Register(userParam.Username, userParam.Password);
 
             if (registered == false)
                 return BadRequest(new { message = "Registration failed, Username taken" });

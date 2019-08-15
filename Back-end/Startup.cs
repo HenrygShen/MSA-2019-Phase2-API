@@ -36,6 +36,7 @@ namespace Back_end
                 c.AddPolicy("AllowOrigin", options => options.WithOrigins("http://localhost:3000",
                                                                         "https://localhost:44307",
                                                                         "https://msascriberapido.azurewebsites.net/",
+                                                                        "https://videolounge.azurewebsites.net",
                                                                         "https://www.youtube.com")
                                                             .AllowAnyMethod()
                                                             .AllowAnyHeader()
@@ -105,6 +106,7 @@ namespace Back_end
                 builder.WithOrigins("http://localhost:3000",
                     "https://localhost:44307",
                     "https://msascriberapido.azurewebsites.net/",
+                    "https://videolounge.azurewebsites.net",
                     "https://www.youtube.com")
                     .AllowAnyHeader()
                     .AllowAnyMethod()
