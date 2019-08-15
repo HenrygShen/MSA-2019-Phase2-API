@@ -15,7 +15,7 @@ namespace Back_end.DAL
         Task<bool> AddComment(CommentsDTO commentInfo);
         Task<bool> DeleteComment(int commentId);
         Task<bool> UpdateComment(int commentId, string comment);
-        Task<bool> UpdateLikes(int commentId, int userId, int numLikes, bool like, string likesList);
+        Task<bool> UpdateLikes(int commentId, int userId, bool like);
     }
     public class CommentsRepository : ICommentsRepository
     {
@@ -51,10 +51,9 @@ namespace Back_end.DAL
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     await connection.OpenAsync();
-                    await connection.ExecuteAsync(@"insert into Comments (VideoId, Comment, Likes, LikesList, TimeStamp, Edited) 
-                                                        values(@videoId, @comment, @likes, @likesList, @timeStamp, 0)", 
-                                                        new { commentInfo.VideoId, commentInfo.Comment, commentInfo.Likes,
-                                                        commentInfo.LikesList, commentInfo.TimeStamp });
+                    await connection.ExecuteAsync(@"insert into Comments (VideoId, Comment, Likes, LikesList, TimeStamp, Edited, Username) 
+                                                        values(@videoId, @comment, @likes, @likesList, @timeStamp, 0, @username)", 
+                                                        commentInfo);
                     return true;
                 }
             }
@@ -71,7 +70,7 @@ namespace Back_end.DAL
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     await connection.OpenAsync();
-                    await connection.ExecuteAsync("Delete Comments where CommentId=@commentId)", new { commentId });
+                    await connection.ExecuteAsync("Delete Comments where CommentId=@commentId", new { commentId });
                     return true;
                 }
             }
@@ -98,7 +97,7 @@ namespace Back_end.DAL
             }
         }
 
-        public async Task<bool> UpdateLikes(int commentId, int userId, int numLikes, bool like, string likesList)
+        public async Task<bool> UpdateLikes(int commentId, int userId, bool like)
         {
             try
             {
@@ -106,10 +105,12 @@ namespace Back_end.DAL
                 {
                     await connection.OpenAsync();
 
+                    string likesList = connection.QueryFirstOrDefault<string>("Select LikesList from Comments where CommentId = @commentId", new { commentId });
+                    int likes = connection.QueryFirstOrDefault<int>("Select Likes from Comments where CommentId = @commentId", new { commentId });
                     if (like)
                     {
                         // Add to likes
-                        numLikes++;
+                        likes++;
 
                         // Add userId to likesList
                         string newUser = userId.ToString() + "-";
@@ -118,13 +119,13 @@ namespace Back_end.DAL
                     else
                     {
                         // Remove from likes
-                        numLikes--;
+                        likes--;
 
                         // Remove userId from likesList
                         string oldUser = userId.ToString() + "-";
                         likesList = likesList.Replace(oldUser,"");
                     }
-                    await connection.ExecuteAsync("UPDATE Comments SET Likes = @likes, LikesList = @likesList WHERE CommentId=@commentId", new { likes = numLikes, likesList, commentId });
+                    await connection.ExecuteAsync("UPDATE Comments SET Likes = @likes, LikesList = @likesList WHERE CommentId=@commentId", new { likes, likesList, commentId });
 
                     return true;
                 }

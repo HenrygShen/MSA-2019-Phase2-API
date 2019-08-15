@@ -34,9 +34,15 @@ namespace Back_end.DAL
                     if (user == null)
                         return null;
 
-                    // authentication successful so return user details without password
-                    user.Password = null;
-                    return user;
+                    if(user.Password == password)
+                    {
+                        user.Password = null;
+                        return user;
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
             }
             catch

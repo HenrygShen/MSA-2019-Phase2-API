@@ -14,14 +14,13 @@ namespace Back_end.Model
         public string LikesList { get; set; }
         public string TimeStamp { get; set; }
         public bool Edited { get; set; }
+        public string Username { get; set; }
     }
 
     public class LikesDTO
     {
         public int CommentId { get; set; }
         public int UserId { get; set; }
-        public int NumLikes { get; set; }
-        public string LikesList { get; set; }
         public bool Like { get; set; }
     }
     public class Comments
@@ -34,5 +33,6 @@ namespace Back_end.Model
         public string LikesList { get; set; }
         public string TimeStamp { get; set; }
         public bool Edited { get; set; }
+        public string Username { get; set; }
     }
 }

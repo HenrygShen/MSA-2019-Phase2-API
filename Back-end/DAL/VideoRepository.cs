@@ -14,6 +14,7 @@ namespace Back_end.DAL
 
         Task<IEnumerable<Video>> GetVideos();
         Task<Video> GetVideoByID(int VideoId);
+        Task<Video> GetVideoByURL(string URL);
         Task<bool> AddVideo(Video video);
         Task<bool> DeleteVideo(int VideoId);
         Task<bool> UpdateVideo(Video video);
@@ -21,12 +22,10 @@ namespace Back_end.DAL
     }
     public class VideoRepository : IVideoRepository
     {
-        private scriberContext context;
         private readonly string connectionString;
 
         public VideoRepository(scriberContext context)
         {
-            this.context = context;
             this.connectionString = "Server=tcp:scriber-hgs.database.windows.net,1433;Initial Catalog=scriber;Persist Security Info=False;User ID=admin-hgs;Password=scriber-7890;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
         }
 
@@ -55,6 +54,23 @@ namespace Back_end.DAL
                 {
                     await connection.OpenAsync();
                     var video = connection.QuerySingleOrDefaultAsync<Video>("Select * from Video where videoId=@id", new { id }).Result;
+                    return video;
+                }
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public async Task<Video> GetVideoByURL(string URL)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+                    var video = connection.QuerySingleOrDefaultAsync<Video>("Select * from Video where webURL=@URL", new { URL }).Result;
                     return video;
                 }
             }

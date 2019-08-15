@@ -100,6 +100,11 @@ namespace Back_end.Controllers
             Video video;
             String videoURL;
             String videoId;
+            Video checkVideo = await _videoRepository.GetVideoByURL(data.URL);
+            if (checkVideo != null)
+            {
+                return CreatedAtAction("GetVideo", new { id = checkVideo.VideoId }, checkVideo);
+            }
             try
             {
                 // Constructing the video object from our helper function
@@ -115,8 +120,12 @@ namespace Back_end.Controllers
             // Add this video object to the database
             await _videoRepository.AddVideo(video);
 
+            // Get video for videoId
+            Video newVideo = await _videoRepository.GetVideoByURL(data.URL);
+
             // Get the primary key of the newly created video record
-            int id = video.VideoId;
+            //video = _videoRepository.GetVideoByID
+            int id = newVideo.VideoId;
 
             // This is needed because context are NOT thread safe, therefore we create another context for the following task.
             // We will be using this to insert transcriptions into the database on a separate thread

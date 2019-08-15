@@ -24,7 +24,7 @@ namespace Back_end.Controllers
         }
         // GET api/<controller>/5
         [HttpGet("{videoId}")]
-        public async Task<IActionResult> GetComments(int videoId)
+        public async Task<ActionResult<IEnumerable<Comments>>> GetComments(int videoId)
         {
             var comments = await _commentsRepository.GetComments(videoId);
             return Ok(comments);
@@ -56,7 +56,7 @@ namespace Back_end.Controllers
         [HttpPut("UpdateLikes")]
         public async Task<IActionResult> UpdateLikes([FromBody]LikesDTO commentInfo)
         {
-            bool updated = await _commentsRepository.UpdateLikes(commentInfo.CommentId, commentInfo.UserId, commentInfo.NumLikes, commentInfo.Like, commentInfo.LikesList);
+            bool updated = await _commentsRepository.UpdateLikes(commentInfo.CommentId, commentInfo.UserId, commentInfo.Like);
             if (!updated)
                 return BadRequest(new { message = "Failed to update likes" });
 
