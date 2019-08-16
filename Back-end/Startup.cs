@@ -35,11 +35,7 @@ namespace Back_end
         {
             services.AddCors(c =>
             {
-                c.AddPolicy("AllowOrigin", options => options.WithOrigins("http://localhost:3000",
-                                                                        "https://localhost:44307",
-                                                                        "https://msascriberapido.azurewebsites.net/",
-                                                                        "https://videolounge.azurewebsites.net",
-                                                                        "https://www.youtube.com")
+                c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin()
                                                             .AllowAnyMethod()
                                                             .AllowAnyHeader()
                                                             .AllowCredentials());
@@ -101,11 +97,7 @@ namespace Back_end
             // Make sure the CORS middleware is ahead of SignalR.
             app.UseCors(builder =>
             {
-                builder.WithOrigins("http://localhost:3000",
-                    "https://localhost:44307",
-                    "https://msascriberapido.azurewebsites.net/",
-                    "https://videolounge.azurewebsites.net",
-                    "https://www.youtube.com")
+                builder.AllowAnyOrigin()
                     .AllowAnyHeader()
                     .AllowAnyMethod()
                     .AllowCredentials();
