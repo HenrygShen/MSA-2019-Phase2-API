@@ -16,12 +16,10 @@ namespace Back_end.Controllers
     [EnableCors("AllowOrigin")]
     public class TranscriptionsController : ControllerBase
     {
-        private readonly scriberContext _context;
         private ITranscriptionsRepository _transcriptionsRepository;
 
-        public TranscriptionsController(scriberContext context, ITranscriptionsRepository transcriptionsRepository)
+        public TranscriptionsController(ITranscriptionsRepository transcriptionsRepository)
         {
-            _context = context;
             _transcriptionsRepository = transcriptionsRepository;
         }
 
@@ -77,21 +75,13 @@ namespace Back_end.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Transcription>> DeleteTranscription(int id)
         {
-            var transcription = await _context.Transcription.FindAsync(id);
-            if (transcription == null)
+            bool deleted = await _transcriptionsRepository.DeleteTranscription(id);
+            if (!deleted)
             {
                 return NotFound();
             }
 
-            _context.Transcription.Remove(transcription);
-            await _context.SaveChangesAsync();
-
-            return transcription;
-        }
-
-        private bool TranscriptionExists(int id)
-        {
-            return _context.Transcription.Any(e => e.TranscriptionId == id);
+            return Ok(new { message = "Transcription Deleted" }) ;
         }
     }
 }

@@ -24,7 +24,7 @@ namespace Back_end.DAL
     {
         private readonly string connectionString;
 
-        public VideoRepository(scriberContext context)
+        public VideoRepository()
         {
             this.connectionString = "Server=tcp:scriber-hgs.database.windows.net,1433;Initial Catalog=scriber;Persist Security Info=False;User ID=admin-hgs;Password=scriber-7890;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
         }
@@ -70,7 +70,7 @@ namespace Back_end.DAL
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     await connection.OpenAsync();
-                    var video = connection.QuerySingleOrDefaultAsync<Video>("Select * from Video where webURL=@URL", new { URL }).Result;
+                    var video = await connection.QuerySingleOrDefaultAsync<Video>("Select * from Video where webURL=@URL", new { URL });
                     return video;
                 }
             }

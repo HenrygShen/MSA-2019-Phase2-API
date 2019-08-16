@@ -48,14 +48,11 @@ namespace Back_end
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2).AddJsonOptions(
                         options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
-            //services.AddAuthentication("BasicAuthentication")
-            //    .AddScheme<AuthenticationSchemeOptions, AuthenticationHandler>("BasicAuthentication", null);
-
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ICommentsRepository, CommentsRepository>();
             services.AddScoped<IVideoRepository, VideoRepository>();
+            services.AddScoped<ITranscriptionsRepository, TranscriptionsRepository>();
 
-            services.AddDbContext<scriberContext>();
 
             services.AddAutoMapper(typeof(Startup));
             // Register the Swagger generator, defining 1 or more Swagger documents

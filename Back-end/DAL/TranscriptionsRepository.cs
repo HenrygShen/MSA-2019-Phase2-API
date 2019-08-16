@@ -13,9 +13,8 @@ namespace Back_end.DAL
         Task<IEnumerable<Transcription>> GetTranscriptions();
         Task<Transcription> GetTranscription(int id);
         Task<bool> AddTranscription(Transcription transcription);
-        Task<bool> DeleteComment(int commentId);
+        Task<bool> DeleteTranscription(int transcriptionId);
         Task<bool> UpdateTranscription(Transcription transcription);
-        Task<bool> UpdateLikes(int commentId, int userId, bool like);
     }
     public class TranscriptionsRepository : ITranscriptionsRepository
     {
@@ -34,7 +33,6 @@ namespace Back_end.DAL
                 {
                     await connection.OpenAsync();
                     var transcriptions = await connection.QueryAsync<Transcription>("Select * from Transcription");
-                    // Check for , returns null if user not found
                     return transcriptions;
                 }
             }
@@ -51,8 +49,7 @@ namespace Back_end.DAL
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     await connection.OpenAsync();
-                    var transcription = await connection.QuerySingleOrDefault<Transcription>("Select * from Transcription where TranscriptionId=@id", new { id }).Result;
-                    // Check for , returns null if user not found
+                    var transcription = await connection.QuerySingleOrDefaultAsync<Transcription>("Select * from Transcription where TranscriptionId=@id", new { id });
                     return transcription;
                 }
             }
@@ -70,7 +67,6 @@ namespace Back_end.DAL
                 {
                     await connection.OpenAsync();
                     await connection.ExecuteAsync("UPDATE Transcription SET VideoId = @VideoId, StartTime = @StartTime, Phrase = @Phrase WHERE TranscriptionId=@TranscriptionId", transcription );
-                    // Check for , returns null if user not found
                     return true;
                 }
             }
@@ -87,9 +83,27 @@ namespace Back_end.DAL
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     await connection.OpenAsync();
-                    await connection.ExecuteAsync(@"insert into Trancriptions (VideoId, StartTime, Phrase) 
+                    await connection.ExecuteAsync(@"insert into Transcription (VideoId, StartTime, Phrase) 
                                                         values(@VideoId, @StartTime, @Phrase)",
                                                         transcription);
+                    return true;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteTranscription(int transcriptionId)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+                    await connection.ExecuteAsync("Delete Transcription where TranscriptionId=@transcriptionId",
+                                                        new { transcriptionId });
                     return true;
                 }
             }

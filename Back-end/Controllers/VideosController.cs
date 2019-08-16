@@ -127,11 +127,9 @@ namespace Back_end.Controllers
             //video = _videoRepository.GetVideoByID
             int id = newVideo.VideoId;
 
-            // This is needed because context are NOT thread safe, therefore we create another context for the following task.
-            // We will be using this to insert transcriptions into the database on a separate thread
-            // So that it doesn't block the API.
-            scriberContext tempContext = new scriberContext();
-            TranscriptionsController transcriptionsController = new TranscriptionsController(tempContext);
+
+            ITranscriptionsRepository transcriptionsRepository = new TranscriptionsRepository();
+            TranscriptionsController transcriptionsController = new TranscriptionsController(transcriptionsRepository);
 
             // This will be executed in the background.
             Task addCaptions = Task.Run(async () =>
