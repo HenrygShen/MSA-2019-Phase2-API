@@ -1,22 +1,17 @@
-# Phase 2 Backend - Database and API
+# MSA-2019-Phase2-FE
 
-For this module we will be creating an API and the Database to support <i>Scribr</i> React Application.
+How to run the application:
 
-## Before you start
-Make sure you have the following softwares/services:
-* Visual Studio Community 2017
-    * when installing ensure ASP.NET and Web Development is selected
-* Azure Account with Azure for Students subscription
-* .NET Core 2.2 SDK
+1. Open Visual Studio and select "Open a project or solution".
+2. Navigate to the project folder and select the "Back-end.sln" file.
+3. Start the server with IIS Express.
 
+---
+Features (Advanced Requirements):
 
-# Contents
-This module includes
-* Relational database schema design
-* SQL Server database creation using Microsoft Azure Portal
-* Creating Web API application using ASP.NET Core in Visual Studio
-* Calling YouTube Data V3 API to retrieve information about a YouTube video
-* Using an undocumented API of the YouTube website by web crawling to insert store transcriptions
-* Using HTTP PATCH method to modify the content in the database
-
-Please refer to the corresponding section in the folders to get started.
+1. Creation and usage of custom branding that is integreated into end product. E.g. Custom Logo's and theming.
+2. Authentication (Authentication with API, and user signup. Password is hashed with BCrypt).
+3. Social Media Integration (Comment section for each video, and the ability to like comments and favourite videos).
+4. Use Relational Databases (Connecting to Azure SQL database with C# dapper package).
+5. Responsive UI.
+6. Signal R.
