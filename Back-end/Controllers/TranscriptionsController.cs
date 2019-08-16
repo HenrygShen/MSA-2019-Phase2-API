@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Back_end.Model;
 using Microsoft.AspNetCore.Cors;
+using Back_end.DAL;
 
 namespace Back_end.Controllers
 {
@@ -16,24 +17,27 @@ namespace Back_end.Controllers
     public class TranscriptionsController : ControllerBase
     {
         private readonly scriberContext _context;
+        private ITranscriptionsRepository _transcriptionsRepository;
 
-        public TranscriptionsController(scriberContext context)
+        public TranscriptionsController(scriberContext context, ITranscriptionsRepository transcriptionsRepository)
         {
             _context = context;
+            _transcriptionsRepository = transcriptionsRepository;
         }
 
         // GET: api/Transcriptions
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Transcription>>> GetTranscription()
         {
-            return await _context.Transcription.ToListAsync();
+            var result = await _transcriptionsRepository.GetTranscriptions();
+            return Ok(result);
         }
 
         // GET: api/Transcriptions/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Transcription>> GetTranscription(int id)
         {
-            var transcription = await _context.Transcription.FindAsync(id);
+            var transcription = await _transcriptionsRepository.GetTranscription(id);
 
             if (transcription == null)
             {
@@ -52,23 +56,10 @@ namespace Back_end.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(transcription).State = EntityState.Modified;
+            bool updated = await _transcriptionsRepository.UpdateTranscription(transcription);
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!TranscriptionExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            if (!updated)
+                return NotFound();
 
             return NoContent();
         }
@@ -77,8 +68,7 @@ namespace Back_end.Controllers
         [HttpPost]
         public async Task<ActionResult<Transcription>> PostTranscription(Transcription transcription)
         {
-            _context.Transcription.Add(transcription);
-            await _context.SaveChangesAsync();
+            await _transcriptionsRepository.AddTranscription(transcription);
 
             return CreatedAtAction("GetTranscription", new { id = transcription.TranscriptionId }, transcription);
         }

@@ -5,6 +5,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Back_end.Model
 {
+    //public partial class TranscriptionDTO
+    //{
+    //    public int? VideoId { get; set; }
+    //    public int StartTime { get; set; }
+    //    public string Phrase { get; set; }
+    //}
     public partial class Transcription
     {
         public int TranscriptionId { get; set; }
