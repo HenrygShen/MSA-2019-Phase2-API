@@ -14,7 +14,6 @@ namespace Back_end.DAL
         Task<IEnumerable<Comments>> GetComments(int videoId);
         Task<bool> AddComment(CommentsDTO commentInfo);
         Task<bool> DeleteComment(int commentId);
-        Task<bool> UpdateComment(int commentId, string comment);
         Task<bool> UpdateLikes(int commentId, int userId, bool like);
     }
     public class CommentsRepository : ICommentsRepository
@@ -80,22 +79,6 @@ namespace Back_end.DAL
             }
         }
 
-        public async Task<bool> UpdateComment(int commentId, string comment)
-        {
-            try
-            {
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    await connection.OpenAsync();
-                    await connection.ExecuteAsync("UPDATE Comments SET Comment = @comment, Edited = 1 WHERE CommentId=@commentId", new { comment, commentId });
-                    return true;
-                }
-            }
-            catch
-            {
-                return false;
-            }
-        }
 
         public async Task<bool> UpdateLikes(int commentId, int userId, bool like)
         {

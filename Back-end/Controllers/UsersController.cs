@@ -19,6 +19,9 @@ namespace WebApi.Controllers
             _userRepository = userRepository;
         }
 
+        /// <summary>
+        /// Checks if the supplied username and password match with an existing user in the database.
+        /// </summary>
         [HttpPost("Authenticate")]
         public async Task<IActionResult> Authenticate([FromBody]UserDTO userParam)
         {
@@ -30,6 +33,9 @@ namespace WebApi.Controllers
             return Ok(user);
         }
 
+        /// <summary>
+        /// Adds a new username and password to the database.
+        /// </summary>
         [HttpPost("Signup")]
         public async Task<IActionResult> SignUp([FromBody]UserDTO userParam)
         {

@@ -22,7 +22,10 @@ namespace Back_end.Controllers
         {
             _commentsRepository = commentsRepository;
         }
-        // GET api/<controller>/5
+
+        /// <summary>
+        /// Retrieves all comments for the specified videoId.
+        /// </summary>
         [HttpGet("{videoId}")]
         public async Task<ActionResult<IEnumerable<Comments>>> GetComments(int videoId)
         {
@@ -30,7 +33,9 @@ namespace Back_end.Controllers
             return Ok(comments);
         }
 
-        // POST api/<controller>
+        /// <summary>
+        /// Adds a comment to the specified video.
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> AddComment([FromBody]CommentsDTO commentInfo)
         {
@@ -41,18 +46,9 @@ namespace Back_end.Controllers
             return Ok(new { message = "Comment saved" });
         }
 
-        // PUT api/<controller>/
-        [HttpPut("UpdateComment")]
-        public async Task<IActionResult> UpdateComment([FromBody]Comments commentInfo)
-        {
-            bool updated = await _commentsRepository.UpdateComment(commentInfo.CommentId, commentInfo.Comment);
-            if (!updated)
-                return BadRequest(new { message = "Failed to update comment" });
-
-            return Ok(new { message = "Comment updated" });
-        }
-
-        // PUT api/<controller>/
+        /// <summary>
+        /// Updates likes, either adding a like or removing a like from the specified comment.
+        /// </summary>
         [HttpPut("UpdateLikes")]
         public async Task<IActionResult> UpdateLikes([FromBody]LikesDTO commentInfo)
         {
@@ -63,7 +59,9 @@ namespace Back_end.Controllers
             return Ok(new { message = "Likes updated" });
         }
 
-        // DELETE api/<controller>/5
+        /// <summary>
+        /// Deletes comment by its commentId. 
+        /// </summary>
         [HttpDelete("{commentId}")]
         public async Task<IActionResult> DeleteComment(int commentId)
         {

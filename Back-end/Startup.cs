@@ -15,6 +15,8 @@ using Swashbuckle.AspNetCore.Swagger;
 using AutoMapper;
 using Back_end.CentralHub;
 using Back_end.DAL;
+using System.Reflection;
+using System.IO;
 
 namespace Back_end
 {
@@ -60,16 +62,15 @@ namespace Back_end
             {
                 c.SwaggerDoc("v1", new Info
                 {
-                    Title = "Scribr API",
+                    Title = "VideoLounge API",
                     Version = "v1",
                     Description = "A web API providing a custom toolkit for YouTube video transcription.",
-                    Contact = new Contact
-                    {
-                        Name = "MSA 2019 - Phase 2",
-                        Email = "nzmsa@microsoft.com",
-                        Url = "https://github.com/NZMSA/2018-Phase-2"
-                    },
                 });
+
+                // XML Documentation
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
             });
         }
 

@@ -34,7 +34,9 @@ namespace Back_end.Controllers
             _videoRepository = videoRepository;
         }
 
-        // GET: api/Videos
+        /// <summary>
+        /// Retrieves all videos stored in the database.
+        /// </summary>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Video>>> GetVideo()
         {
@@ -42,7 +44,9 @@ namespace Back_end.Controllers
             return Ok(videos);
         }
 
-        // GET: api/Videos/5
+        /// <summary>
+        /// Retrieves a video by its id.
+        /// </summary>
         [HttpGet("{id}")]
         public async Task<ActionResult<Video>> GetVideo(int id)
         {
@@ -56,7 +60,9 @@ namespace Back_end.Controllers
             return Ok(video);
         }
 
-        // GET api/Videos/SearchByTranscriptions/HelloWorld
+        /// <summary>
+        /// Retrieves all videos that contain a certain phrase in its transcriptions.
+        /// </summary>
         [HttpGet("SearchByTranscriptions/{searchString}")]
         public async Task<ActionResult<IEnumerable<Video>>> Search(string searchString)
         {
@@ -76,7 +82,9 @@ namespace Back_end.Controllers
             return Ok(videos);
         }
 
-        //PUT with PATCH to handle isFavourite
+        /// <summary>
+        /// Update the Video isFavourite value.
+        /// </summary>
         [HttpPatch("update/{id}")]
         public async Task<ActionResult<VideoDTO>> Patch(int id, [FromBody]JsonPatchDocument<VideoDTO> videoPatch)
         {
@@ -93,7 +101,9 @@ namespace Back_end.Controllers
             return videoDTO;
         }
 
-        // POST: api/Videos
+        /// <summary>
+        /// Adds the Video to the database, then gets the video transcriptions and saves it to Transcriptions.
+        /// </summary>
         [HttpPost]
         public async Task<ActionResult<Video>> PostVideo([FromBody]URLDTO data)
         {
@@ -152,7 +162,9 @@ namespace Back_end.Controllers
             return CreatedAtAction("GetVideo", new { id = video.VideoId }, video);
         }
 
-        // DELETE: api/Videos/5
+        /// <summary>
+        /// Delete the video by id.
+        /// </summary>
         [HttpDelete("{id}")]
         public async Task<ActionResult<Video>> DeleteVideo(int id)
         {

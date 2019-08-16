@@ -23,7 +23,9 @@ namespace Back_end.Controllers
             _transcriptionsRepository = transcriptionsRepository;
         }
 
-        // GET: api/Transcriptions
+        /// <summary>
+        /// Retrieves all transcriptions stored in the database.
+        /// </summary>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Transcription>>> GetTranscription()
         {
@@ -31,7 +33,9 @@ namespace Back_end.Controllers
             return Ok(result);
         }
 
-        // GET: api/Transcriptions/5
+        /// <summary>
+        /// Retrieves transcription with the specified id.
+        /// </summary>
         [HttpGet("{id}")]
         public async Task<ActionResult<Transcription>> GetTranscription(int id)
         {
@@ -45,24 +49,25 @@ namespace Back_end.Controllers
             return transcription;
         }
 
-        // PUT: api/Transcriptions/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutTranscription(int id, Transcription transcription)
-        {
-            if (id != transcription.TranscriptionId)
-            {
-                return BadRequest();
-            }
+        //[HttpPut("{id}")]
+        //public async Task<IActionResult> PutTranscription(int id, Transcription transcription)
+        //{
+        //    if (id != transcription.TranscriptionId)
+        //    {
+        //        return BadRequest();
+        //    }
 
-            bool updated = await _transcriptionsRepository.UpdateTranscription(transcription);
+        //    bool updated = await _transcriptionsRepository.UpdateTranscription(transcription);
 
-            if (!updated)
-                return NotFound();
+        //    if (!updated)
+        //        return NotFound();
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
-        // POST: api/Transcriptions
+        /// <summary>
+        /// Retrieves all videos stored in the database.
+        /// </summary>
         [HttpPost]
         public async Task<ActionResult<Transcription>> PostTranscription(Transcription transcription)
         {
@@ -71,7 +76,9 @@ namespace Back_end.Controllers
             return CreatedAtAction("GetTranscription", new { id = transcription.TranscriptionId }, transcription);
         }
 
-        // DELETE: api/Transcriptions/5
+        /// <summary>
+        /// Deletes transcription with id.
+        /// </summary>
         [HttpDelete("{id}")]
         public async Task<ActionResult<Transcription>> DeleteTranscription(int id)
         {

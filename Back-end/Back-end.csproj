@@ -7,6 +7,11 @@
     <UserSecretsId>89ffb7b0-5ee7-44c3-b8fc-6336cbaaf128</UserSecretsId>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="6.1.1" />
     <PackageReference Include="BCrypt.Net-Next" Version="3.1.3" />
